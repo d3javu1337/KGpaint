@@ -5,9 +5,86 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /*height: 100%;*/
+  /*width: 100%;*/
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+#menu {
+  padding-top: 16px;
+  padding-left: 16px;
+  padding-right: 16px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  height: 10vh;
+  gap: 10px;
+}
+
+#color_picker_wrapper {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+}
+
+#color_picker {
+  flex-shrink: 0;
+  height: 80%;
+  width: 100%;
+}
+
+#thickness_picker {
+  flex-shrink: 0;
+  height: 80%;
+  width: 100%;
+  justify-items: center;
+}
+
+#thickness_picker_wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 4px;
+}
+
+#image_loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.menu-button {
+  flex: 1;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border: solid black 1px;
+  border-radius: 10px;
+}
+
+#canvas-wrapper{
+  padding: 10px;
+  flex-grow: 3;
+}
+
+#canvas {
+  border: solid black 1px;
+  border-radius: 10px;
+  flex-grow: 3;
 }
