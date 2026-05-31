@@ -1,28 +1,50 @@
-import {DrawContext, DrawMode, Point} from "../model/Model";
+import {DrawContext, DrawMode, Point} from "../model/PaintModel";
 import {ChangeEvent} from "react";
+import ImageService from "../service/ImageService";
 
 export interface ILogic {
     drawDot(point: Point): void;
+
     drawLine(start: Point, end: Point): void;
+
     drawCircle(center: Point, radius: Point): void;
+
     drawRectangle(diagStart: Point, diagEnd: Point): void;
+
     drawPolygon(points: Array<Point>): void;
+
     drawText(at: Point): void;
+
     fill(startPoint: Point): void;
+
     setColor(color: string): void;
+
     clear(): void;
+
     setThickness(thickness: number): void;
+
     save(): void;
+
+    saveByPresigned(): Promise<void>
+
     load(e: ChangeEvent<HTMLInputElement>): void;
+
+    loadBlob(blob: Blob): void
+
     getDrawContext(): DrawContext;
+
     setDrawContext(drawContext: DrawContext): void;
+
     setDrawMode(mode: DrawMode): void;
-    validatePointsForDrawMode(points : Array<Point>): boolean;
+
+    validatePointsForDrawMode(points: Array<Point>): boolean;
+
     draw(points: Array<Point>): void;
 }
 
 class Logic implements ILogic {
     private drawContext: DrawContext;
+
     public constructor(
         private readonly canvas: HTMLCanvasElement,
     ) {
@@ -132,9 +154,9 @@ class Logic implements ILogic {
         const imageData = context.getImageData(0, 0, this.canvas.width, this.canvas.height);
         const data = imageData.data;
 
-        const r = parseInt(this.drawContext.color.slice(1,3), 16);
-        const g = parseInt(this.drawContext.color.slice(3,5), 16);
-        const b = parseInt(this.drawContext.color.slice(5,7), 16);
+        const r = parseInt(this.drawContext.color.slice(1, 3), 16);
+        const g = parseInt(this.drawContext.color.slice(3, 5), 16);
+        const b = parseInt(this.drawContext.color.slice(5, 7), 16);
 
         function getIndex(x: number, y: number): number {
             return (y * canvas.width + x) * 4;
@@ -155,16 +177,16 @@ class Logic implements ILogic {
             if (x < 0 || x >= canvas.width || y < 0 || y >= canvas.height) continue;
 
             const idx = getIndex(x, y);
-            if (data[idx] === targetR && data[idx+1] === targetG && data[idx+2] === targetB && data[idx+3] === targetA) {
+            if (data[idx] === targetR && data[idx + 1] === targetG && data[idx + 2] === targetB && data[idx + 3] === targetA) {
                 data[idx] = r;
-                data[idx+1] = g;
-                data[idx+2] = b;
-                data[idx+3] = 255;
+                data[idx + 1] = g;
+                data[idx + 2] = b;
+                data[idx + 3] = 255;
 
-                stack.push([x+1, y]);
-                stack.push([x-1, y]);
-                stack.push([x, y+1]);
-                stack.push([x, y-1]);
+                stack.push([x + 1, y]);
+                stack.push([x - 1, y]);
+                stack.push([x, y + 1]);
+                stack.push([x, y - 1]);
             }
         }
 
@@ -181,7 +203,7 @@ class Logic implements ILogic {
     }
 
     validatePointsForDrawMode(points: Array<Point>): boolean {
-        switch(this.drawContext.mode) {
+        switch (this.drawContext.mode) {
             case DrawMode.Empty: {
                 return false
             }
@@ -206,12 +228,14 @@ class Logic implements ILogic {
             case DrawMode.Text: {
                 return points.length === 1;
             }
-            default: {return false}
+            default: {
+                return false
+            }
         }
     }
 
     draw(points: Array<Point>): void {
-        switch(this.drawContext.mode) {
+        switch (this.drawContext.mode) {
             case DrawMode.Circle: {
                 return this.drawCircle(points[0], points[1]);
             }
@@ -233,7 +257,9 @@ class Logic implements ILogic {
             case DrawMode.Text: {
                 return this.drawText(points[0]);
             }
-            default: {return }
+            default: {
+                return
+            }
 
         }
     }
@@ -277,15 +303,46 @@ class Logic implements ILogic {
         e.target.value = '';
     }
 
+    loadBlob(blob: Blob): void {
+        const objectUrl = URL.createObjectURL(blob);
+        const img = new Image();
+
+        img.crossOrigin = 'anonymous';
+
+        img.onload = () => {
+            const ctx = this.canvas?.getContext('2d');
+            if (!ctx) return;
+
+            ctx.clearRect(0, 0, this.canvas!.width, this.canvas!.height);
+            ctx.drawImage(img, 0, 0, this.canvas!.width, this.canvas!.height);
+            URL.revokeObjectURL(objectUrl);
+        };
+
+        img.src = objectUrl
+    }
+
     save(): void {
         const link = document.createElement('a');
         link.download = 'image.png';
         link.href = this.canvas.toDataURL('image/png');
         link.click();
     }
+
+    async saveByPresigned(): Promise<void> {
+        const pres = await ImageService
+            .saveImage()
+        const blob = await new Promise<Blob>((resolve, reject) => {
+            this.canvas.toBlob((blob) => {
+                if (blob) resolve(blob);
+                else reject(new Error('Canvas toBlob failed'));
+            }, 'image/png');
+        });
+        await ImageService.putImage(pres.data.presigned, blob)
+    }
+
 }
 
 export const instance: (canvas: HTMLCanvasElement,) => ILogic =
-    (canvas: HTMLCanvasElement) =>  {
-    return new Logic(canvas)
-}
+    (canvas: HTMLCanvasElement) => {
+        return new Logic(canvas)
+    }

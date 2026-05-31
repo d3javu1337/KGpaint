@@ -1,7 +1,7 @@
 import {FC, RefObject} from "react";
 import {ILogic} from "../logic/Logic";
 import {ButtonComponent} from "./ButtonComponent";
-import {DrawMode} from "../model/Model";
+import {DrawMode} from "../model/PaintModel";
 
 interface MenuComponentProps {
     logic: RefObject<ILogic | null>;
@@ -29,7 +29,7 @@ const MenuComponent: FC<MenuComponentProps> = ({logic}) => {
             </div>
             <ButtonComponent id={77} name={"Clear"} onClick={() => logic.current?.clear()}/>
 
-            <ButtonComponent id={88} name={"Save"} onClick={() => logic.current?.save()}/>
+            <ButtonComponent id={88} name={"Save"} onClick={() => logic.current?.saveByPresigned()}/>
             <div id={"image_loader"} className={"menu-button"} onClick={() => document.getElementById("fileinput")!.click()}>
                 <label>load file</label>
                 <input type="file" id={"fileinput"} accept="image/*" onChange={(e) => logic.current?.load(e)} hidden/>

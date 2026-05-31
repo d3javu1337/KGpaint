@@ -1,0 +1,5 @@
+export const draw_route = '/'
+export const view_route = '/image'
+export const auth_route = '/auth'
+export const images_route = '/images'
+export const err_route = '/error'

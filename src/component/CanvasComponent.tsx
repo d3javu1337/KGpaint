@@ -1,5 +1,5 @@
 import React, {FC, RefObject, useEffect, useRef} from "react";
-import {DrawMode, Point} from "../model/Model";
+import {DrawMode, Point} from "../model/PaintModel";
 import {ILogic} from "../logic/Logic";
 
 interface CanvasComponentProps {

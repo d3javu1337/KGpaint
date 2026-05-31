@@ -1,14 +1,20 @@
-import React from 'react';
+import React, {createContext} from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import MenuComponent from "./component/MenuComponent";
-import CanvasComponent from "./component/CanvasComponent";
+import Store from "./store/UserStore";
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
+
+const store = new Store();
+
+export const Context = createContext({
+    store,
+})
+
 root.render(
   <React.StrictMode>
     <App />
