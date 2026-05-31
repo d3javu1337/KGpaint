@@ -1,5 +1,5 @@
 import {AxiosResponse} from "axios";
-import api, {storageApi} from "../http/api";
+import {api, storageApi} from "../http/api";
 import {Image} from "../model/ApiModel";
 
 export class PresignedResponse {

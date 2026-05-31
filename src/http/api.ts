@@ -3,17 +3,15 @@ import {AccessToken} from "../model/ApiModel";
 
 
 export const api_url = 'http://localhost:80/api/v1';
-export const storage_api_url = 'http://localhost:80/storage';
 export const gateway_api_url = 'http://localhost:80';
 
 
-const api = axios.create({
+export const api = axios.create({
     baseURL: api_url,
     withCredentials: true,
 })
 
 export const storageApi = axios.create({
-    baseURL: storage_api_url,
     withCredentials: true,
 })
 
@@ -50,5 +48,3 @@ api.interceptors.response.use((config) => {
     }
     throw error;
 })
-
-export default api
